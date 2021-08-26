@@ -1,41 +1,51 @@
-from tkinter import Tk, Canvas, Button, Label
-
-def pintarSegmento(x, t):
-    canvas.create_polygon(x,0,x+t,0,x+t,canvas['height'],x,canvas['height'],outline='blue')
-def cuadroC(x, y, w, h, c):
-    canvas.create_polygon(x,y,x+w,y,x+w,y+h,x,y+h,outline=c)
-
-def pintarPos(p):
-    canvas.create_line(p, 3, p, int(canvas['height']), fill='green')
-def convertirPos(p):
-    p = int((p/pow(2,24))*int(canvas['width']))
-    return p
+import tkinter as tk
 
 
+class canvasRAM(tk.Canvas):
+    def __init__(self, master=None):
+        super().__init__(master, bg='black', width=1100, height=100)
+        self.pack()
+        self.crr = (int(self['width'])-1024)/2
+        
+        self.create_polygon(self.crr,3,self.crr+1024+2,3,self.crr+1024+2,100,self.crr,100,outline='white')
+        pass
 
-ventana = Tk()
+    def convertir(self, p):
+        p = int((p/pow(2,24))*1024)
+        return p
 
-Label(ventana, text="RAM").pack()
+    def pintarSegmento(self, x, t):
+        x = self.convertir(x)
+        t = self.convertir(t)
+        x = x+self.crr+1
+        h = int(100)
+        canvas.create_polygon(x,4,x+t+2,4,x+t+2,h-1,x,h-1,outline='red')
+
+    def pintarProceso(self, x, t):
+        x = self.convertir(x)
+        t = self.convertir(t)
+        x = x+self.crr+2
+        h = int(100)
+        canvas.create_polygon(x,5,x+t,5,x+t,h-2,x,h-2,fill='green')
 
 
-#canvas
-canvas = Canvas(ventana, bg='black', width=1280, height=100)
+
+#Creacion de la ventana
+ventana = tk.Tk()
+tk.Label(ventana, text="RAM").pack()
+
+#canvas para dibujar la RAM
+canvas = canvasRAM(master=ventana)
 canvas.pack()
 
 
+#Puebas de pintar
+canvas.pintarSegmento(0x0,0xFFFFF)
+canvas.pintarSegmento(0xFFFFF,0x1FFFFE)
+
+canvas.pintarProceso(0x0, 0xAF000)
+canvas.pintarProceso(0xFFFFF, 0xFFFFF)
 
 
-pintarSegmento(convertirPos(0x0FFFF0), convertirPos(0x0FFF0F))
-        
-
-for i in range(convertirPos(0x0FFFF0), convertirPos(0xF00000)):
-    pintarPos(i)
-
-
-
-
-ventana.hi_there.pack(side="top")
-
-
+#Correr ventana
 ventana.mainloop()
-
