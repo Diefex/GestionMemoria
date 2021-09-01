@@ -1,50 +1,55 @@
-import tkinter as tk
+from tkinter import Canvas
+from math import floor
 
 
-class canvasRAM(tk.Canvas):
-    def __init__(self, master=None):
-        super().__init__(master, bg='black', width=1280, height=400)
-        self.pack()
+class canvasRAM(Canvas):
+    def __init__(self, master=None, h=20):
+        super().__init__(master, bg='black', width=1280, height=h*16)
 
-        self.crr = (int(self['width'])-1040)/2
-        self.h = 20
-        
+        self.tcr = 1024
+        self.crX = ((int(self['width'])-self.tcr)/2)-1
+        self.crY = 5
+        self.hcr = h-self.crY
         
         for i in range(16):
-            hc = i*self.h
+            hc = i*(self.crY+self.hcr)+self.crY
             p0 = i*0x100000
             p1 = p0+0xFFFFF
-            self.create_text(self.crr-35, 3+hc+self.h/2, text=hex(p0), fill="white", font="consolas 10")
-            self.create_text(35+self.crr+1040, 3+hc+self.h/2, text=hex(p1), fill="white", font="consolas 10")
-            self.create_polygon(self.crr,3+hc,self.crr+1040+2,3+hc,self.crr+1040+2,self.h+hc,self.crr,self.h+hc,outline='white')
-        
-        self.segmentos = []
+            self.create_text(self.crX-35, hc+self.hcr/2, text=hex(p0), fill="white", font="consolas 10")
+            self.create_text(35+self.crX+self.tcr, hc+self.hcr/2, text=hex(p1), fill="white", font="consolas 10")
 
-    def convertir(self, p):
-        p = int((p/pow(2,24))*1040)
-        return p
+            x1 = self.crX
+            x2 = self.crX+self.tcr+1
+            y1 = hc
+            y2 = hc+self.hcr
+            self.create_polygon(x1, y1, x2, y1, x2, y2, x1, y2, outline='white')
+        
+        #Lista de divisiones
+        self.divisiones = []
 
-    def pintarSegmento(self, x, t):
-        x = self.convertir(x)
-        t = self.convertir(t)
-        x = x+self.crr+1
-        h = int(100)
-        self.create_polygon(x,4,x+t+2,4,x+t+2,h-1,x,h-1,outline='red')
-        
-    
-    def pintarSegmentos(self, t):
-        t = int(t/1024)
-        x = self.crr+1
-        
-        for j in range(16):
-            for i in range(int(1024/t)):
-                h = j*self.h
-                self.create_polygon(x+(i*(t+1)),4+h,x+(i*(t+1))+t+1,4+h,x+(i*(t+1))+t+1,self.h-1+h,x+(i*(t+1)),self.h-1+h,outline='red')
-                self.segmentos.append([x+(i*(t+1)), h])
-                 
+    def pintar_division(self, tam):
+        tam = floor(tam/1024)
+        pos = tam-1
+        if len(self.divisiones)!=0:
+            pos = pos + self.divisiones[-1]+tam+1
+        self.divisiones.append(pos-tam)
 
-    def pintarProceso(self, i, t):
+        r = floor(pos/1024)
+        x = self.crX+1+pos-(r*1024)
+        y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
+        y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
+        self.create_line(x,y1,x,y2,fill='red')
+
+    def pintar_proceso(self, i, tam, cl):      
         
-        t = int(t/1024)
-        c = self.segmentos[i]
-        self.create_polygon(1+c[0],5+c[1],t+1+c[0],5+c[1],t+1+c[0],self.h-1+c[1],1+c[0],self.h-1+c[1],fill='green')
+        for t in range(int(tam/1024)):
+            pos = self.divisiones[i]+1
+            pos = pos+t
+            r = floor(pos/1024)
+            pos = self.crX+1+pos-(r*1024)
+            x = pos
+            y1 = r*(self.crY+self.hcr)+self.crY+1
+            y2 = r*(self.crY+self.hcr)+self.crY+self.hcr
+            self.create_line(x, y1, x, y2, fill=cl)
+        
+
