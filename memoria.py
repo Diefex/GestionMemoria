@@ -51,5 +51,11 @@ class canvasRAM(Canvas):
             y1 = r*(self.crY+self.hcr)+self.crY+1
             y2 = r*(self.crY+self.hcr)+self.crY+self.hcr
             self.create_line(x, y1, x, y2, fill=cl)
-        
 
+        if (i+1) < len(self.divisiones):
+            pos = self.divisiones[i+1]
+            r = floor(pos/1024)
+            x = self.crX+1+pos-(r*1024)
+            y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
+            y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
+            self.create_line(x,y1,x,y2,fill='red')
