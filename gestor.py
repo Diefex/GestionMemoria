@@ -24,7 +24,7 @@ class Paginacion(Gestor):
         self.hacer_marcos()
     
     def nuevo_proceso(self, tam):
-        p = []
+        proceso = []
         n = floor(tam/self.tam_pag)
         if(tam%self.tam_pag != 0):
             n+=1
@@ -40,14 +40,21 @@ class Paginacion(Gestor):
                 tam = tam-self.tam_pag
                 self.marcos[j] = self.tam_pag
             
-            p.append(j)
+            proceso.append(j)
             
-        self.procesos.append(p)
+        self.procesos.append([proceso, True])
 
-    def terminar_proceso(self, tbl):
-        for pag in tbl:
+        cl = self.RAM.colores[len(self.procesos)%len(self.RAM.colores)]
+        for pag in proceso:
+            self.RAM.pintar_proceso(pag, self.marcos[pag], cl)
+
+    def terminar_proceso(self, i):
+        proceso = self.procesos[i]
+        for pag in proceso[0]:
+            self.RAM.pintar_proceso(pag, self.marcos[pag], 'black')
             self.marcos[pag] = 0
+        proceso[1] = False
 
     def hacer_marcos(self):
-        for i in range(8):
+        for m in self.marcos:
             self.RAM.pintar_division(self.tam_pag)
