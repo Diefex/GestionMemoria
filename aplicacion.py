@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 from memoria import canvasRAM
-from gestor import Paginacion
+from paginacion import Paginacion
+from math import floor
 
 class Aplicacion:
     def __init__(self):
@@ -37,12 +38,13 @@ class Aplicacion:
     def act_panel_qproceso(self):
         for w in self.lf2.grid_slaves():
             w.destroy()
-        j = 0
+        
         for i in range(len(self.gestor.procesos)):
             if self.gestor.procesos[i][1] == True:
-                ttk.Radiobutton(self.lf2, text="Proceso "+str(i), variable=self.ipr, value=i).grid(column=j, row=1, padx=5, pady=5, sticky="we")
-                j+=1
-        ttk.Button(self.lf2, text="Terminar Proceso", command=self.quitar_proceso).grid(column=0, row=3, columnspan=2, padx=5, pady=5, sticky="we")
+                cl = self.RAM.colores[(i+1)%len(self.RAM.colores)]
+                tk.Radiobutton(self.lf2, text="Proceso "+str(i), bg=cl, variable=self.ipr, value=i).grid(column=i%10, row=1+floor(i/10), padx=5, pady=5, sticky="we")
+                
+        ttk.Button(self.lf2, text="Terminar Proceso", command=self.quitar_proceso).grid(column=0, row=3+floor(i/10), columnspan=2, padx=5, pady=5, sticky="we")
         
     def panel_inf(self):
         self.lf3=ttk.Labelframe(self.ventana, text="Informacion")
