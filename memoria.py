@@ -33,8 +33,9 @@ class canvasRAM(Canvas):
         tam = floor(tam/1024)
         pos = tam-1
         if len(self.divisiones)!=0:
-            pos = pos + self.divisiones[-1]+tam+1
-        self.divisiones.append(pos-tam)
+            pos = pos + self.divisiones[-1][0]+self.divisiones[-1][1]+1
+        self.divisiones.append([pos-tam, tam])
+        
 
         r = floor(pos/1024)
         x = self.crX+1+pos-(r*1024)
@@ -45,7 +46,7 @@ class canvasRAM(Canvas):
     def pintar_proceso(self, i, tam, cl):      
         
         for t in range(int(tam/1024)):
-            pos = self.divisiones[i]+1
+            pos = self.divisiones[i][0]+1
             pos = pos+t
             r = floor(pos/1024)
             pos = self.crX+1+pos-(r*1024)
@@ -55,7 +56,7 @@ class canvasRAM(Canvas):
             self.create_line(x, y1, x, y2, fill=cl)
 
         if (i+1) < len(self.divisiones):
-            pos = self.divisiones[i+1]
+            pos = self.divisiones[i+1][0]
             r = floor(pos/1024)
             x = self.crX+1+pos-(r*1024)
             y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
