@@ -29,13 +29,19 @@ class canvasRAM(Canvas):
         #Lista de colores
         self.colores = ['violet red', 'green', 'orange', 'cyan', 'pink', 'blue violet', 'orchid', 'lawn green']
 
-    def pintar_division(self, tam):
+    def pintar_division(self, pos, tam):
         tam = floor(tam/1024)
-        pos = tam-1
-        if len(self.divisiones)!=0:
-            pos = pos + self.divisiones[-1][0]+self.divisiones[-1][1]+1
-        self.divisiones.append([pos-tam, tam])
+        pos = floor(pos/1024)
         
+        self.divisiones.append([pos, tam])
+        
+        r = floor(pos/1024)
+        x = self.crX+1+pos-(r*1024)
+        y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
+        y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
+        self.create_line(x,y1,x,y2,fill='red')
+
+        pos = pos + tam -1
 
         r = floor(pos/1024)
         x = self.crX+1+pos-(r*1024)
@@ -46,7 +52,7 @@ class canvasRAM(Canvas):
     def pintar_proceso(self, i, tam, cl):      
         
         for t in range(int(tam/1024)):
-            pos = self.divisiones[i][0]+1
+            pos = self.divisiones[i][0]
             pos = pos+t
             r = floor(pos/1024)
             pos = self.crX+1+pos-(r*1024)
@@ -55,10 +61,18 @@ class canvasRAM(Canvas):
             y2 = r*(self.crY+self.hcr)+self.crY+self.hcr
             self.create_line(x, y1, x, y2, fill=cl)
 
-        if (i+1) < len(self.divisiones):
-            pos = self.divisiones[i+1][0]
-            r = floor(pos/1024)
-            x = self.crX+1+pos-(r*1024)
-            y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
-            y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
-            self.create_line(x,y1,x,y2,fill='red')
+    
+        pos = self.divisiones[i][0]
+        r = floor(pos/1024)
+        x = self.crX+1+pos-(r*1024)
+        y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
+        y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
+        self.create_line(x,y1,x,y2,fill='red')
+
+        pos = pos + self.divisiones[i][1] -1
+
+        r = floor(pos/1024)
+        x = self.crX+1+pos-(r*1024)
+        y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
+        y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
+        self.create_line(x,y1,x,y2,fill='red')
