@@ -1,23 +1,17 @@
 import tkinter as tk
 from tkinter import ttk
+
 from memoria import canvasRAM
+
 from paginacion import Paginacion
+import particiones as particiones
+
 from math import floor
 
 class Aplicacion:
     def __init__(self):
-        self.ventana=tk.Tk()
-        self.RAM = canvasRAM()
-        self.gestor = Paginacion(self.RAM)
-
-        self.panel_nproceso()
-        self.panel_qproceso()
-        self.panel_inf()
+        self.init_ven_sel_gestores()
                
-        self.RAM.grid(column=0, row=2, columnspan=2)
-        
-        self.ventana.mainloop()
-        
 
     def panel_nproceso(self):
         self.lf1=ttk.LabelFrame(self.ventana,text="Nuevo Proceso")
@@ -70,5 +64,48 @@ class Aplicacion:
     
     def pintar_division(self, tam):
         self.RAM.pintar_division(tam)
+
+    def centrar_ventana(self, ventana):
+        
+        x = ventana.winfo_screenwidth() // 2 - ventana.winfo_width() // 2
+        y = ventana.winfo_screenheight() // 2 - ventana.winfo_height() // 2
+
+        posicion = str(ventana.winfo_width()) + "x" + str(ventana.winfo_height()) + "+" + str(x) + "+" + str(y)
+        ventana.geometry(posicion)
+        print(posicion)
+        ventana.resizable(0,0)
+
+    def init_ventana_principal(self, gestor):
+        self.ventana=tk.Tk()
+        self.RAM = canvasRAM()
+
+        if(gestor==1):
+            self.gestor = particiones.EstaticaFija(self.RAM)
+        elif(gestor==2):
+            self.gestor = Paginacion(self.RAM)
+        else:
+            print('Seleccione un gestor')
+            print(gestor)
+
+        self.panel_nproceso()
+        self.panel_qproceso()
+        self.panel_inf()
+               
+        self.RAM.grid(column=0, row=2, columnspan=2)
+
+        self.ventana.mainloop()
+    
+    def init_ven_sel_gestores(self):
+        self.ven_sel_gestores = tk.Tk()
+        lf=ttk.LabelFrame(self.ven_sel_gestores,text="Seleccionar Gestor")
+        lf.grid(column=0, row=0, sticky="w", padx=10, pady=10)
+
+        gestor = tk.IntVar()
+        ttk.Radiobutton(lf, text="Particiones Estáticas Fijas", variable=gestor, value=1).grid(column=0, row=0, sticky="w")
+        ttk.Radiobutton(lf, text="Paginacion", variable=gestor, value=2).grid(column=0, row=1, sticky="w")
+        ttk.Button(self.ven_sel_gestores, text="Seleccionar", command=self.ven_sel_gestores.destroy).grid(column=0, row=1)
+        
+        self.ven_sel_gestores.mainloop()
+        self.init_ventana_principal(gestor.get())
         
 ap = Aplicacion()
