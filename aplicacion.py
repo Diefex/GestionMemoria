@@ -1,3 +1,4 @@
+from segmentacion import Segmentacion
 import tkinter as tk
 from tkinter import ttk
 
@@ -49,7 +50,7 @@ class Aplicacion:
     def nuevo_proceso(self):
         tam = self.dato1.get()
         if tam!='':
-            tam = int(tam)
+            tam = int(tam)*1024
         else:
             tam = 0
 
@@ -87,6 +88,8 @@ class Aplicacion:
             self.gestor = particiones.Dinamica(self.RAM)
         elif(gestor==4):
             self.gestor = Paginacion(self.RAM)
+        elif(gestor==5):
+            self.gestor = Segmentacion(self.RAM)
         else:
             print('Seleccione un gestor')
             print(gestor)
