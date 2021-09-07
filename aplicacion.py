@@ -82,6 +82,10 @@ class Aplicacion:
         if(gestor==1):
             self.gestor = particiones.EstaticaFija(self.RAM)
         elif(gestor==2):
+            self.gestor = particiones.EstaticaVariable(self.RAM)
+        elif(gestor==3):
+            self.gestor = particiones.Dinamica(self.RAM)
+        elif(gestor==4):
             self.gestor = Paginacion(self.RAM)
         else:
             print('Seleccione un gestor')
@@ -102,7 +106,10 @@ class Aplicacion:
 
         gestor = tk.IntVar()
         ttk.Radiobutton(lf, text="Particiones Estáticas Fijas", variable=gestor, value=1).grid(column=0, row=0, sticky="w")
-        ttk.Radiobutton(lf, text="Paginacion", variable=gestor, value=2).grid(column=0, row=1, sticky="w")
+        ttk.Radiobutton(lf, text="Particiones Estáticas Variables", variable=gestor, value=2).grid(column=0, row=1, sticky="w")
+        ttk.Radiobutton(lf, text="Particiones Dinámicas", variable=gestor, value=3).grid(column=0, row=2, sticky="w")
+        ttk.Radiobutton(lf, text="Paginación", variable=gestor, value=4).grid(column=0, row=3, sticky="w")
+        ttk.Radiobutton(lf, text="Segmentación", variable=gestor, value=5).grid(column=0, row=4, sticky="w")
         ttk.Button(self.ven_sel_gestores, text="Seleccionar", command=self.ven_sel_gestores.destroy).grid(column=0, row=1)
         
         self.ven_sel_gestores.mainloop()

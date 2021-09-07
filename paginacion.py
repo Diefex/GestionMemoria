@@ -45,5 +45,5 @@ class Paginacion(Gestor):
         proceso[1] = False
 
     def hacer_marcos(self):
-        for m in self.marcos:
-            self.RAM.pintar_division(self.tam_pag)
+        for i in range(len(self.marcos)):
+            self.RAM.pintar_division(i*self.tam_pag, self.tam_pag)
