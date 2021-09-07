@@ -5,7 +5,6 @@ class Paginacion(Gestor):
     def __init__(self, ram):
         super().__init__(ram)
         self.tam_pag = 0x10000
-        self.tam_ram = 0x1000000
         self.marcos=[]
         self.n_marcos = int(self.tam_ram/self.tam_pag)
         for i in range(self.n_marcos):
