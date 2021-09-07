@@ -17,13 +17,14 @@ class Aplicacion:
     def panel_nproceso(self):
         self.lf1=ttk.LabelFrame(self.ventana,text="Nuevo Proceso")
         self.lf1.grid(column=0, row=0, sticky="w")
-        self.label1=ttk.Label(self.lf1, text="Tamaño:")
+        self.label1=ttk.Label(self.lf1, text="Tamaño (Kb):")
         self.label1.grid(column=0,row=0, padx=5, pady=5)
         self.dato1=tk.StringVar()
         self.entry1=ttk.Entry(self.lf1, textvariable=self.dato1)
-        self.entry1.grid(column=1, row=0, padx=5, pady=5)
+        self.entry1.grid(column=1, row=0, padx=0, pady=5)
+        ttk.Label(self.lf1, text="Kb").grid(column=2, row=0, padx=0, pady=5)
         self.boton1=ttk.Button(self.lf1, text="Agregar Proceso", command=self.nuevo_proceso)
-        self.boton1.grid(column=0, row=3, columnspan=2, padx=5, pady=5, sticky="we")
+        self.boton1.grid(column=0, row=3, columnspan=3, padx=5, pady=5, sticky="we")
 
     def panel_qproceso(self):
         self.lf2=ttk.LabelFrame(self.ventana,text="Quitar Proceso")
