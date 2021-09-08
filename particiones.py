@@ -11,9 +11,11 @@ class EstaticaFija(Gestor):
         self.hacer_particiones()
     
     def nuevo_proceso(self, tam):
+        if self.particiones[-1]!=0:
+            return False
         
         if (tam>self.tam_par):
-            print("El tamano del proceso exede la particion")
+            return False
         else:
             for i in range(len(self.particiones)):
                 if self.particiones[i] == 0:    
@@ -24,6 +26,7 @@ class EstaticaFija(Gestor):
             
             cl = self.RAM.colores[len(self.procesos)%len(self.RAM.colores)]
             self.RAM.pintar_proceso(proceso, self.particiones[proceso], cl)
+            return True
         
 
     def terminar_proceso(self, i):
@@ -42,28 +45,40 @@ class EstaticaVariable(Gestor):
         super().__init__(ram)
         
         self.particiones=[
-            [0, 0x100000],
-            [0, 0x80000],
-            [0, 0x80000],
-            [0, 0x40000],
-            [0, 0x40000],
-            [0, 0x40000],
-            [0, 0x40000]
+            [0, 0x100000], [0, 0x100000], [0, 0x100000],
+            [0, 0x80000], [0, 0x80000],
+            [0, 0x80000], [0, 0x80000],
+            [0, 0x80000], [0, 0x80000],
+            [0, 0x40000], [0, 0x40000], [0, 0x40000], [0, 0x40000],
+            [0, 0x40000], [0, 0x40000], [0, 0x40000], [0, 0x40000],
+            [0, 0x40000], [0, 0x40000], [0, 0x40000], [0, 0x40000],
+            [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000],
+            [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000],
+            [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000], [0, 0x20000],
         ]
+        for i in range(16*3):
+            self.particiones.append([0, 0x10000])
+        for i in range(32):
+            self.particiones.append([0, 0x8000])
+
         self.hacer_particiones()
     
     def nuevo_proceso(self, tam):
+        proceso = -1
         #Primer ajuste
         for i in range(len(self.particiones)):
-            if self.particiones[i][0] == 0:    
+            if (self.particiones[i][0] == 0) and (self.particiones[i][1]>=tam):    
                 self.particiones[i][0] = tam
                 proceso = i
                 break
         
+        if proceso == -1:
+            return False
         self.procesos.append([proceso, True])
         
         cl = self.RAM.colores[len(self.procesos)%len(self.RAM.colores)]
         self.RAM.pintar_proceso(proceso, self.particiones[proceso][0], cl)
+        return True
         
 
     def terminar_proceso(self, i):
@@ -96,6 +111,8 @@ class Dinamica(Gestor):
             if op[i]<0:
                 op[i]=self.tam_ram+1
         i = op.index(min(op))
+        if op[i]>self.tam_ram:
+                return False
         pos = self.espacios[i][0]
         self.espacios[i][0] += tam
         self.espacios[i][1] -= tam
@@ -106,6 +123,7 @@ class Dinamica(Gestor):
 
         cl = self.RAM.colores[len(self.procesos)%len(self.RAM.colores)]
         self.RAM.pintar_proceso(len(self.particiones)-1, tam, cl)
+        return True
 
     def terminar_proceso(self, i):
         proceso = self.procesos[i]

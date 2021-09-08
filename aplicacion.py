@@ -1,6 +1,7 @@
 from segmentacion import Segmentacion
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 from memoria import canvasRAM
 
@@ -55,8 +56,10 @@ class Aplicacion:
         else:
             tam = 0
 
-        self.gestor.nuevo_proceso(tam)
-        self.act_panel_qproceso()
+        if self.gestor.nuevo_proceso(tam):
+            self.act_panel_qproceso()
+        else:
+            messagebox.showerror('No Hay Memoria', "No queda memoria donde ubicar el proceso")
     
     def quitar_proceso(self):
         pr = self.ipr.get()

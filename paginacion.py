@@ -21,6 +21,8 @@ class Paginacion(Gestor):
             m = self.marcos[j]
             while m!=0:
                 j+=1
+                if j>=self.n_marcos:
+                    return False
                 m = self.marcos[j]
             if(tam <= self.tam_pag):
                 self.marcos[j] = tam
@@ -35,6 +37,7 @@ class Paginacion(Gestor):
         cl = self.RAM.colores[len(self.procesos)%len(self.RAM.colores)]
         for pag in proceso:
             self.RAM.pintar_proceso(pag, self.marcos[pag], cl)
+        return True
 
     def terminar_proceso(self, i):
         proceso = self.procesos[i]

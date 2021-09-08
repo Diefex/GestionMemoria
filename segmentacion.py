@@ -32,6 +32,8 @@ class Segmentacion(Gestor):
                 if op[i]<0:
                     op[i]=self.tam_ram+1
             i = op.index(min(op))
+            if op[i]>self.tam_ram:
+                return False
             pos = self.espacios[i][0]
             self.espacios[i][0] += tam_seg
             self.espacios[i][1] -= tam_seg
@@ -46,6 +48,7 @@ class Segmentacion(Gestor):
         for seg in proceso:
             self.RAM.pintar_division(self.segmentos[seg[0]][0], self.segmentos[seg[0]][1])
             self.RAM.pintar_proceso(seg[0], seg[1], cl)
+        return True
 
     def terminar_proceso(self, i):
         proceso = self.procesos[i]
