@@ -52,14 +52,23 @@ class Aplicacion:
     def nuevo_proceso(self):
         tam = self.dato1.get()
         if tam!='':
-            tam = int(tam)*1024
+            if len(tam.split(','))>2 and isinstance(self.gestor, Segmentacion):
+                pass
+            elif len(tam.split(','))>1:
+                tam = 0
+            elif isinstance(self.gestor, Segmentacion):
+                tam = 0
+            else:
+                tam = int(tam)*1024
         else:
             tam = 0
-
-        if self.gestor.nuevo_proceso(tam):
-            self.act_panel_qproceso()
+        if tam!=0:
+            if self.gestor.nuevo_proceso(tam):
+                self.act_panel_qproceso()
+            else:
+                messagebox.showerror('No Hay Memoria', "No queda memoria donde ubicar el proceso")
         else:
-            messagebox.showerror('No Hay Memoria', "No queda memoria donde ubicar el proceso")
+            messagebox.showwarning('Tamaño no Valido', "Introduzca un tamaño de proceso válido")
     
     def quitar_proceso(self):
         pr = self.ipr.get()

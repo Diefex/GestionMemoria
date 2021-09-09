@@ -13,16 +13,12 @@ class Segmentacion(Gestor):
     def nuevo_proceso(self, tam):
         proceso = []
         
-        n_segmentos = randint(2,5)
-        tam_ac = 0
-        for i in range(n_segmentos):
-            if i==n_segmentos-1:
-                tam_seg = tam-tam_ac
-            else:
-                t = floor((tam-tam_ac)*randint(3,7)*(0.1))
-                tam_seg = t-(t%1024)
-                tam_ac += tam_seg
-            
+        segmentos = tam.split(',')
+        
+        for tam_seg in segmentos:
+        
+            tam_seg = int(tam_seg)*1024
+        
             #Mejor ajuste
             op = []
             for i in range(len(self.espacios)):
