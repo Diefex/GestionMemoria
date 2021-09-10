@@ -1,14 +1,15 @@
-from segmentacion import Segmentacion
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
 from memoria import canvasRAM
 
+from segmentacion import Segmentacion
 from paginacion import Paginacion
 import particiones as particiones
 
 from math import floor
+from info import tabla
 
 class Aplicacion:
     def __init__(self):
@@ -16,19 +17,20 @@ class Aplicacion:
                
 
     def panel_nproceso(self):
-        self.lf1=ttk.LabelFrame(self.ventana,text="Nuevo Proceso")
-        self.lf1.grid(column=0, row=0, sticky="w")
-        self.label1=ttk.Label(self.lf1, text="Tamaño (Kb):")
-        self.label1.grid(column=0,row=0, padx=5, pady=5)
+        lf=ttk.LabelFrame(self.ventana,text="Nuevo Proceso")
+        lf.grid(column=0, row=0, sticky="w")
+        ttk.Label(lf, text="Tamaño (Kb):").grid(column=0,row=0, padx=5, pady=5)
         self.dato1=tk.StringVar()
-        self.entry1=ttk.Entry(self.lf1, textvariable=self.dato1)
-        self.entry1.grid(column=1, row=0, padx=0, pady=5)
-        ttk.Label(self.lf1, text="Kb").grid(column=2, row=0, padx=0, pady=5)
-        self.boton1=ttk.Button(self.lf1, text="Agregar Proceso", command=self.nuevo_proceso)
-        self.boton1.grid(column=0, row=3, columnspan=3, padx=5, pady=5, sticky="we")
+        ttk.Entry(lf, textvariable=self.dato1).grid(column=1, row=0, padx=0, pady=5)
+        ttk.Label(lf, text="Kb").grid(column=2, row=0, padx=0, pady=5)
+        ttk.Button(lf, text="Agregar Proceso", command=self.nuevo_proceso).grid(column=0, row=3, columnspan=3, padx=5, pady=5, sticky="we")
+        if isinstance(self.gestor, particiones.EstaticaFija) or isinstance(self.gestor, particiones.EstaticaVariable) or isinstance(self.gestor, particiones.Dinamica):
+            ttk.Button(lf, text="Tabla de Particiones", command=lambda: self.hacer_tabla(self.gestor.get_tabla_par())).grid(column=0, row=4, columnspan=3, padx=5, sticky="we")
+        if isinstance(self.gestor, particiones.Dinamica):
+            ttk.Button(lf, text="Tabla de Espacios", command=lambda: self.hacer_tabla(self.gestor.get_tabla_esp())).grid(column=0, row=5, columnspan=3, padx=5, sticky="we")
 
     def panel_qproceso(self):
-        self.lf2=ttk.LabelFrame(self.ventana,text="Quitar Proceso")
+        self.lf2=ttk.LabelFrame(self.ventana,text="Procesos")
         self.lf2.grid(column=1, row=0, sticky="w")
         self.ipr = tk.IntVar()
     
@@ -39,15 +41,13 @@ class Aplicacion:
         for i in range(len(self.gestor.procesos)):
             if self.gestor.procesos[i][1] == True:
                 cl = self.RAM.colores[(i+1)%len(self.RAM.colores)]
-                tk.Radiobutton(self.lf2, text="Proceso "+str(i), bg=cl, variable=self.ipr, value=i).grid(column=i%10, row=1+floor(i/10), padx=5, pady=5, sticky="we")
+                tk.Radiobutton(self.lf2, text="Proceso_"+str(i), bg=cl, variable=self.ipr, value=i).grid(column=i%10, row=1+floor(i/10), padx=5, pady=5, sticky="we")
                 
         ttk.Button(self.lf2, text="Terminar Proceso", command=self.quitar_proceso).grid(column=0, row=3+floor(i/10), columnspan=2, padx=5, pady=5, sticky="we")
-        
-    def panel_inf(self):
-        self.lf3=ttk.Labelframe(self.ventana, text="Informacion")
-        self.lf3.grid(column=0, row=1, columnspan=2, sticky="w")
-        self.lbl=ttk.Label(self.lf3, text="Informacion")
-        self.lbl.grid(column=0, row=0, padx=5, pady=5, sticky="we")
+        if isinstance(self.gestor, Paginacion):
+            ttk.Button(self.lf2, text="Tabla de Páginas", command=lambda: self.hacer_tabla(self.gestor.get_tabla_pag(i))).grid(column=2, row=3+floor(i/10), columnspan=2, padx=5, sticky="we")
+        if isinstance(self.gestor, Segmentacion):
+            ttk.Button(self.lf2, text="Tabla de Segmentos", command=lambda: self.hacer_tabla(self.gestor.get_tabla_seg(i))).grid(column=2, row=3+floor(i/10), columnspan=2, padx=5, sticky="we")
 
     def nuevo_proceso(self):
         tam = self.dato1.get()
@@ -75,19 +75,9 @@ class Aplicacion:
         if len(self.gestor.procesos)!=0:
             self.gestor.terminar_proceso(pr)
             self.act_panel_qproceso()
-    
-    def pintar_division(self, tam):
-        self.RAM.pintar_division(tam)
 
-    def centrar_ventana(self, ventana):
-        
-        x = ventana.winfo_screenwidth() // 2 - ventana.winfo_width() // 2
-        y = ventana.winfo_screenheight() // 2 - ventana.winfo_height() // 2
-
-        posicion = str(ventana.winfo_width()) + "x" + str(ventana.winfo_height()) + "+" + str(x) + "+" + str(y)
-        ventana.geometry(posicion)
-        print(posicion)
-        ventana.resizable(0,0)
+    def hacer_tabla(self, tbl):
+        tabla(tbl)
 
     def init_ventana_principal(self, gestor):
         self.ventana=tk.Tk()
@@ -109,7 +99,6 @@ class Aplicacion:
 
         self.panel_nproceso()
         self.panel_qproceso()
-        self.panel_inf()
                
         self.RAM.grid(column=0, row=2, columnspan=2)
 
