@@ -40,6 +40,20 @@ class EstaticaFija(Gestor):
         for i in range(len(self.particiones)):
             self.RAM.pintar_division(i*self.tam_par,self.tam_par)
 
+    def get_tabla_par(self):
+        tabla = []
+        tabla.append(["Particion", "Proceso", "Ocupación"])
+        for i in range(len(self.particiones)):
+            if self.particiones[i]!=0:
+                tabla.append([str(i), 
+                "Proceso_"+str(self.procesos.index([i, True])),
+                str((self.particiones[i]/self.tam_par)*100)+"%"])
+            else:
+                tabla.append([str(i), 
+                "Ninguno",
+                "0%"])
+        return tabla
+
 class EstaticaVariable(Gestor):
     def __init__(self, ram):
         super().__init__(ram)
@@ -94,6 +108,23 @@ class EstaticaVariable(Gestor):
             self.RAM.pintar_division(pos, self.particiones[i][1])
             pos += self.particiones[i][1]
 
+    def get_tabla_par(self):
+        tabla = []
+        tabla.append(["Particion","Capacidad", "Proceso", "Ocupación"])
+        for i in range(len(self.particiones)):
+            cap = floor(self.particiones[i][1]/1024)
+            if self.particiones[i][0]!=0:
+                tabla.append([str(i), 
+                str(cap)+"Kb", 
+                "Proceso_"+str(self.procesos.index([i, True])),
+                str((self.particiones[i][0]/(cap*1024))*100)+"%"])
+            else:
+                tabla.append([str(i), 
+                str(cap)+"Kb", 
+                "Ninguno",
+                "0%"])
+        return tabla
+
 class Dinamica(Gestor):
     def __init__(self, ram):
         super().__init__(ram)
@@ -144,3 +175,16 @@ class Dinamica(Gestor):
             self.espacios.append(espacio)
             
         proceso[1] = False
+    
+    def get_tabla_par(self):
+        tabla = []
+        tabla.append(["Proceso","Dirección Base", "Capacidad"])
+        for i in range(len(self.particiones)):
+            if self.procesos[i][1]:
+                cap = floor(self.particiones[i][0]/1024)
+
+                tabla.append(["Proceso_"+str(self.procesos.index([i, True])),
+                str(hex(self.particiones[i][1])), 
+                str(cap)+"Kb"])
+            
+        return tabla
