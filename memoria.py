@@ -49,6 +49,23 @@ class canvasRAM(Canvas):
         y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
         self.create_line(x,y1,x,y2,fill='red')
 
+    def borrar_division(self, i):
+        pos = self.divisiones[i][0]
+        r = floor(pos/1024)
+        x = self.crX+1+pos-(r*1024)
+        y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
+        y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
+        self.create_line(x,y1,x,y2,fill='black')
+        self.create_line(x,y2-1,x,y2,fill='white')
+
+        pos = pos + self.divisiones[i][1] -1
+        r = floor(pos/1024)
+        x = self.crX+1+pos-(r*1024)
+        y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
+        y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
+        self.create_line(x,y1,x,y2,fill='black')
+        self.create_line(x,y2-1,x,y2,fill='white')
+
     def pintar_proceso(self, i, tam, cl):      
         
         for t in range(int(tam/1024)):
@@ -67,18 +84,11 @@ class canvasRAM(Canvas):
         x = self.crX+1+pos-(r*1024)
         y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
         y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
-        if cl!='black':
-            self.create_line(x,y1,x,y2,fill='red')
-        else:
-            self.create_line(x,y2-1,x,y2,fill='white')
+        self.create_line(x,y1,x,y2,fill='red')
 
         pos = pos + self.divisiones[i][1] -1
-
         r = floor(pos/1024)
         x = self.crX+1+pos-(r*1024)
         y1 = r*(self.crY+self.hcr)+self.crY+(self.hcr/2)
         y2 = r*(self.crY+self.hcr)+self.crY+self.hcr+1
-        if cl!='black':
-            self.create_line(x,y1,x,y2,fill='red')
-        else:
-            self.create_line(x,y2-1,x,y2,fill='white')
+        self.create_line(x,y1,x,y2,fill='red')

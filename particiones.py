@@ -161,6 +161,7 @@ class Dinamica(Gestor):
     def terminar_proceso(self, i):
         proceso = self.procesos[i]
         self.RAM.pintar_proceso(proceso[0], self.particiones[proceso[0]][0], 'black')
+        self.RAM.borrar_division(proceso[0])
         espacio = [self.particiones[proceso[0]][1], self.particiones[proceso[0]][0]]
         for i in range(len(self.espacios)):
             if espacio[0]+espacio[1] == self.espacios[i][0]:

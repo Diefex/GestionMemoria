@@ -51,6 +51,7 @@ class Segmentacion(Gestor):
         proceso = self.procesos[i]
         for seg in proceso[0]:
             self.RAM.pintar_proceso(seg[0], seg[1], 'black')
+            self.RAM.borrar_division(seg[0])
             espacio = [self.segmentos[seg[0]][0], self.segmentos[seg[0]][1]]
             for i in range(len(self.espacios)):
                 if espacio[0]+espacio[1] == self.espacios[i][0]:
