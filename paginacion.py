@@ -49,3 +49,10 @@ class Paginacion(Gestor):
     def hacer_marcos(self):
         for i in range(len(self.marcos)):
             self.RAM.pintar_division(i*self.tam_pag, self.tam_pag)
+
+    def get_tabla_pag(self, i):
+        tabla = [['Página', 'Marco', 'Dirección Base']]
+        proceso = self.procesos[i][0]
+        for i in range(len(proceso)):
+            tabla.append([str(i), proceso[i], str(hex(self.tam_pag*proceso[i]))])
+        return tabla
