@@ -66,3 +66,13 @@ class Segmentacion(Gestor):
                 self.espacios.append(espacio)
                 
         proceso[1] = False
+
+    def get_tabla_seg(self, i):
+        tabla = [['Segmento', 'Dirección Base', 'Capacidad']]
+        proceso = self.procesos[i][0]
+        tabla.append(['Código', str(hex(self.segmentos[proceso[0][0]][0])), str(self.segmentos[proceso[0][0]][1]/1024)+'Kb'])
+        tabla.append(['Datos', str(hex(self.segmentos[proceso[1][0]][0])), str(self.segmentos[proceso[1][0]][1]/1024)+'Kb'])
+        tabla.append(['Pila', str(hex(self.segmentos[proceso[2][0]][0])), str(self.segmentos[proceso[2][0]][1]/1024)+'Kb'])
+        for i in range(3, len(proceso)):
+            tabla.append(['Segmento_'+str(i), str(hex(self.segmentos[proceso[i][0]][0])), str(self.segmentos[proceso[i][0]][1]/1024)+'Kb'])
+        return tabla
