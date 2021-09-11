@@ -26,7 +26,7 @@ class Aplicacion:
         ttk.Button(lf, text="Agregar Proceso", command=self.nuevo_proceso).grid(column=0, row=3, columnspan=3, padx=5, pady=5, sticky="we")
         if isinstance(self.gestor, particiones.EstaticaFija) or isinstance(self.gestor, particiones.EstaticaVariable) or isinstance(self.gestor, particiones.Dinamica):
             ttk.Button(lf, text="Tabla de Particiones", command=lambda: self.hacer_tabla(self.gestor.get_tabla_par())).grid(column=0, row=4, columnspan=3, padx=5, sticky="we")
-        if isinstance(self.gestor, particiones.Dinamica):
+        if isinstance(self.gestor, particiones.Dinamica) or isinstance(self.gestor, Segmentacion):
             ttk.Button(lf, text="Tabla de Espacios", command=lambda: self.hacer_tabla(self.gestor.get_tabla_esp())).grid(column=0, row=5, columnspan=3, padx=5, sticky="we")
 
     def panel_qproceso(self):

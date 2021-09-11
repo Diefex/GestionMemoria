@@ -33,7 +33,8 @@ class Segmentacion(Gestor):
             pos = self.espacios[i][0]
             self.espacios[i][0] += tam_seg
             self.espacios[i][1] -= tam_seg
-
+            if self.espacios[i][1]<=0:
+                self.espacios.pop(i)
             self.segmentos.append([pos, tam_seg])
             proceso.append([len(self.segmentos)-1, tam_seg])
         
@@ -75,4 +76,11 @@ class Segmentacion(Gestor):
         tabla.append(['Pila', str(hex(self.segmentos[proceso[2][0]][0])), str(self.segmentos[proceso[2][0]][1]/1024)+'Kb'])
         for i in range(3, len(proceso)):
             tabla.append(['Segmento_'+str(i), str(hex(self.segmentos[proceso[i][0]][0])), str(self.segmentos[proceso[i][0]][1]/1024)+'Kb'])
+        return tabla
+
+    def get_tabla_esp(self):
+        tabla = []
+        tabla.append(['Dirección Base', 'Capacidad'])
+        for esp in self.espacios:
+            tabla.append([str(hex(esp[0])), str(esp[1]/1024)+'Kb'])
         return tabla

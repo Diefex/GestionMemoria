@@ -147,6 +147,8 @@ class Dinamica(Gestor):
         pos = self.espacios[i][0]
         self.espacios[i][0] += tam
         self.espacios[i][1] -= tam
+        if self.espacios[i][1]<=0:
+                self.espacios.pop(i)
 
         self.particiones.append([tam, pos])
         self.procesos.append([len(self.particiones)-1, True])
@@ -187,4 +189,11 @@ class Dinamica(Gestor):
                 str(hex(self.particiones[i][1])), 
                 str(cap)+"Kb"])
             
+        return tabla
+
+    def get_tabla_esp(self):
+        tabla = []
+        tabla.append(['Dirección Base', 'Capacidad'])
+        for esp in self.espacios:
+            tabla.append([str(hex(esp[0])), str(esp[1]/1024)+'Kb'])
         return tabla
