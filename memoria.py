@@ -27,7 +27,7 @@ class canvasRAM(Canvas):
         #Lista de divisiones
         self.divisiones = []
         #Lista de colores
-        self.colores = ['violet red', 'green', 'orange', 'cyan', 'pink', 'blue violet', 'orchid', 'lawn green']
+        self.colores = ['violet red', 'green', 'orange', 'cyan', 'pink', 'blue violet', 'orchid', 'lawn green', "blue", "cyan", "magenta", "chocolate", "coral", "plum", "snow4", "gold", "peru", "maroon", "blue violet", "orchid", "firebrick", "wheat", "SkyBlue"]
 
     def pintar_division(self, pos, tam):
         tam = floor(tam/1024)
