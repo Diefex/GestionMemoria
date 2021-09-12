@@ -174,8 +174,8 @@ class Dinamica(Gestor):
 
         self.particiones.append([tam, pos])
         self.procesos.append([len(self.particiones)-1, True])
-        self.RAM.pintar_division(pos, tam)
 
+        self.RAM.pintar_division(pos, tam)
         cl = self.RAM.colores[len(self.procesos)%len(self.RAM.colores)]
         self.RAM.pintar_proceso(len(self.particiones)-1, tam, cl)
         return True
@@ -223,3 +223,33 @@ class Dinamica(Gestor):
         for esp in self.espacios:
             tabla.append([str(hex(esp[0])), str(esp[1]/1024)+'Kb'])
         return tabla
+
+    def compactar(self):
+        espacio = self.espacios[0]
+        c = 0
+        while len(self.espacios)!=1 and c<100:
+
+            for i in range(len(self.procesos)):
+                if self.procesos[i][1] == True:
+                    p=self.procesos[i][0]
+                    if espacio[0]+espacio[1]==self.particiones[p][1]:
+                        self.particiones.append([self.particiones[p][0], espacio[0]])
+                        espacio[0] = espacio[0]+self.particiones[p][0]
+                        self.procesos[i][0] = len(self.particiones)-1
+
+                        self.RAM.pintar_proceso(p, self.particiones[p][0], 'black')
+                        self.RAM.borrar_division(p)
+
+                        self.RAM.pintar_division(self.particiones[-1][1], self.particiones[-1][0])
+                        cl = self.RAM.colores[(i+1)%len(self.RAM.colores)]
+                        self.RAM.pintar_proceso(len(self.particiones)-1, self.particiones[-1][0], cl)
+
+            for i in range(1,len(self.espacios)):
+                if espacio[0]+espacio[1]==self.espacios[i][0]:
+                    self.espacios[i][0] = espacio[0]
+                    self.espacios[i][1]+= espacio[1]
+                    self.espacios.pop(0)
+                    espacio = self.espacios[0]
+                    break
+            
+            c+=1

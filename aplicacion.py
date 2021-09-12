@@ -49,8 +49,8 @@ class Aplicacion:
         if isinstance(self.gestor, Segmentacion):
             ttk.Button(self.lf2, text="Tabla de Segmentos", command=lambda: self.hacer_tabla(self.gestor.get_tabla_seg(i))).grid(column=2, row=3+floor(i/9), columnspan=2, padx=5, sticky="we")
 
-    def panel_algoritmos(self):
-        lf=ttk.LabelFrame(self.ventana,text="Ajustes y Compactacion")
+    def panel_algoritmos(self, c):
+        lf=ttk.LabelFrame(self.ventana,text="Ajustes")
         lf.grid(column=1, row=0, sticky="w")
         self.ajuste = tk.IntVar()
         pr=ttk.Radiobutton(lf, text="Primer Ajuste", variable=self.ajuste, value=1)
@@ -58,7 +58,9 @@ class Aplicacion:
         pr.invoke()
         ttk.Radiobutton(lf, text="Mejor Ajuste", variable=self.ajuste, value=2).grid(column=0, row=1, padx=5, pady=1, sticky="we")
         ttk.Radiobutton(lf, text="Peor Ajuste", variable=self.ajuste, value=3).grid(column=0, row=2, padx=5, pady=1, sticky="we")
-        ttk.Button(lf, text="Compactar").grid(column=0, row=3, padx=5, pady=5, sticky="we")
+        if c:
+            ttk.Checkbutton(lf, text="Compactar", variable=self.comp).grid(column=0, row=3, padx=5, pady=7, sticky="we")
+            
 
     def nuevo_proceso(self):
         tam = self.dato1.get()
@@ -91,6 +93,8 @@ class Aplicacion:
         pr = self.ipr.get()
         if len(self.gestor.procesos)!=0:
             self.gestor.terminar_proceso(pr)
+            if self.comp.get():
+                self.gestor.compactar()
             self.act_panel_qproceso()
 
     def hacer_tabla(self, tbl):
@@ -117,8 +121,13 @@ class Aplicacion:
         self.panel_nproceso()
         self.panel_qproceso()
 
-        if isinstance(self.gestor, particiones.Dinamica) or isinstance(self.gestor, Segmentacion):
-            self.panel_algoritmos()
+        self.comp = tk.BooleanVar()
+        self.comp.set(False)
+
+        if isinstance(self.gestor, particiones.Dinamica):
+            self.panel_algoritmos(True)
+        elif isinstance(self.gestor, Segmentacion):
+            self.panel_algoritmos(False)
                
         self.RAM.grid(column=0, row=2, columnspan=3)
 
