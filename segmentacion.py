@@ -10,7 +10,7 @@ class Segmentacion(Gestor):
         self.espacios = [[0, self.tam_ram]]
         
     
-    def nuevo_proceso(self, tam):
+    def nuevo_proceso(self, tam, ajuste):
         proceso = []
         
         segmentos = tam.split(',')
@@ -19,17 +19,39 @@ class Segmentacion(Gestor):
         
             tam_seg = int(tam_seg)*1024
         
-            #Mejor ajuste
-            op = []
-            for i in range(len(self.espacios)):
-                op.append(self.espacios[i][1]-tam_seg)
+            if ajuste == 1:
+                #Primer ajuste
+                es = False
+                for i in range(len(self.espacios)):
+                    if self.espacios[i][1]>=tam_seg:
+                        es = True
+                        break
+                if not es:
+                    return False
             
-            for i in range(len(op)):
+            elif ajuste == 2:
+                #Mejor ajuste
+                op = []
+                for i in range(len(self.espacios)):
+                    op.append(self.espacios[i][1]-tam_seg)
+                
+                for i in range(len(op)):
+                    if op[i]<0:
+                        op[i]=self.tam_ram+1
+                i = op.index(min(op))
+                if op[i]>self.tam_ram:
+                    return False
+            
+            elif ajuste == 3:
+                #Peor ajuste
+                op = []
+                for i in range(len(self.espacios)):
+                    op.append(self.espacios[i][1]-tam_seg)
+                
+                i = op.index(max(op))
                 if op[i]<0:
-                    op[i]=self.tam_ram+1
-            i = op.index(min(op))
-            if op[i]>self.tam_ram:
-                return False
+                    return False
+                    
             pos = self.espacios[i][0]
             self.espacios[i][0] += tam_seg
             self.espacios[i][1] -= tam_seg
@@ -66,7 +88,29 @@ class Segmentacion(Gestor):
                     break
             if espacio[1]>0:
                 self.espacios.append(espacio)
-                
+                def k(e):
+                    return e[0]
+                self.espacios.sort(key=k)
+        for i in range(len(self.espacios)):
+            for j in range(len(self.espacios)):
+                if i!=j:
+                    if self.espacios[i][0]+self.espacios[i][1] == self.espacios[j][0]:
+                        self.espacios[j][0] = self.espacios[i][0]
+                        self.espacios[j][1]+= self.espacios[i][1]
+                        self.espacios[i][1] = 0
+                        break
+
+                    if self.espacios[i][0] == self.espacios[j][0]+self.espacios[j][1]:
+                        self.espacios[j][1]+= self.espacios[i][1]
+                        self.espacios[i][1] = 0
+                        break
+        empty = []
+        for i in range(len(self.espacios)):
+            if self.espacios[i][1] == 0:
+                empty.append(i)
+        for e in empty:
+            self.espacios.pop(e)
+
         proceso[1] = False
 
     def get_tabla_seg(self, i):

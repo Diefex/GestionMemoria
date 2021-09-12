@@ -31,7 +31,7 @@ class Aplicacion:
 
     def panel_qproceso(self):
         self.lf2=ttk.LabelFrame(self.ventana,text="Procesos")
-        self.lf2.grid(column=1, row=0, sticky="w")
+        self.lf2.grid(column=2, row=0, sticky="w")
         self.ipr = tk.IntVar()
     
     def act_panel_qproceso(self):
@@ -41,13 +41,24 @@ class Aplicacion:
         for i in range(len(self.gestor.procesos)):
             if self.gestor.procesos[i][1] == True:
                 cl = self.RAM.colores[(i+1)%len(self.RAM.colores)]
-                tk.Radiobutton(self.lf2, text="Proceso_"+str(i), bg=cl, variable=self.ipr, value=i).grid(column=i%10, row=1+floor(i/10), padx=5, pady=5, sticky="we")
+                tk.Radiobutton(self.lf2, text="Proceso_"+str(i), bg=cl, variable=self.ipr, value=i).grid(column=i%9, row=1+floor(i/9), padx=5, pady=5, sticky="we")
                 
-        ttk.Button(self.lf2, text="Terminar Proceso", command=self.quitar_proceso).grid(column=0, row=3+floor(i/10), columnspan=2, padx=5, pady=5, sticky="we")
+        ttk.Button(self.lf2, text="Terminar Proceso", command=self.quitar_proceso).grid(column=0, row=3+floor(i/9), columnspan=2, padx=5, pady=5, sticky="we")
         if isinstance(self.gestor, Paginacion):
-            ttk.Button(self.lf2, text="Tabla de Páginas", command=lambda: self.hacer_tabla(self.gestor.get_tabla_pag(i))).grid(column=2, row=3+floor(i/10), columnspan=2, padx=5, sticky="we")
+            ttk.Button(self.lf2, text="Tabla de Páginas", command=lambda: self.hacer_tabla(self.gestor.get_tabla_pag(i))).grid(column=2, row=3+floor(i/9), columnspan=2, padx=5, sticky="we")
         if isinstance(self.gestor, Segmentacion):
-            ttk.Button(self.lf2, text="Tabla de Segmentos", command=lambda: self.hacer_tabla(self.gestor.get_tabla_seg(i))).grid(column=2, row=3+floor(i/10), columnspan=2, padx=5, sticky="we")
+            ttk.Button(self.lf2, text="Tabla de Segmentos", command=lambda: self.hacer_tabla(self.gestor.get_tabla_seg(i))).grid(column=2, row=3+floor(i/9), columnspan=2, padx=5, sticky="we")
+
+    def panel_algoritmos(self):
+        lf=ttk.LabelFrame(self.ventana,text="Ajustes y Compactacion")
+        lf.grid(column=1, row=0, sticky="w")
+        self.ajuste = tk.IntVar()
+        pr=ttk.Radiobutton(lf, text="Primer Ajuste", variable=self.ajuste, value=1)
+        pr.grid(column=0, row=0, padx=5, pady=1, sticky="we")
+        pr.invoke()
+        ttk.Radiobutton(lf, text="Mejor Ajuste", variable=self.ajuste, value=2).grid(column=0, row=1, padx=5, pady=1, sticky="we")
+        ttk.Radiobutton(lf, text="Peor Ajuste", variable=self.ajuste, value=3).grid(column=0, row=2, padx=5, pady=1, sticky="we")
+        ttk.Button(lf, text="Compactar").grid(column=0, row=3, padx=5, pady=5, sticky="we")
 
     def nuevo_proceso(self):
         tam = self.dato1.get()
@@ -63,10 +74,16 @@ class Aplicacion:
         else:
             tam = 0
         if tam!=0:
-            if self.gestor.nuevo_proceso(tam):
-                self.act_panel_qproceso()
+            if isinstance(self.gestor, particiones.Dinamica) or isinstance(self.gestor, Segmentacion):
+                if self.gestor.nuevo_proceso(tam, self.ajuste.get()):
+                    self.act_panel_qproceso()
+                else:
+                    messagebox.showerror('No Hay Memoria', "No queda memoria donde ubicar el proceso")
             else:
-                messagebox.showerror('No Hay Memoria', "No queda memoria donde ubicar el proceso")
+                if self.gestor.nuevo_proceso(tam):
+                    self.act_panel_qproceso()
+                else:
+                    messagebox.showerror('No Hay Memoria', "No queda memoria donde ubicar el proceso")
         else:
             messagebox.showwarning('Tamaño no Valido', "Introduzca un tamaño de proceso válido")
     
@@ -99,9 +116,13 @@ class Aplicacion:
 
         self.panel_nproceso()
         self.panel_qproceso()
-               
-        self.RAM.grid(column=0, row=2, columnspan=2)
 
+        if isinstance(self.gestor, particiones.Dinamica) or isinstance(self.gestor, Segmentacion):
+            self.panel_algoritmos()
+               
+        self.RAM.grid(column=0, row=2, columnspan=3)
+
+        self.ventana.resizable(0,0)
         self.ventana.mainloop()
     
     def init_ven_sel_gestores(self):
@@ -117,6 +138,7 @@ class Aplicacion:
         ttk.Radiobutton(lf, text="Segmentación", variable=gestor, value=5).grid(column=0, row=4, sticky="w")
         ttk.Button(self.ven_sel_gestores, text="Seleccionar", command=self.ven_sel_gestores.destroy).grid(column=0, row=1)
         
+        self.ven_sel_gestores.resizable(0,0)
         self.ven_sel_gestores.mainloop()
         self.init_ventana_principal(gestor.get())
         

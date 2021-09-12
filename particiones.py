@@ -132,18 +132,40 @@ class Dinamica(Gestor):
         self.particiones = []
         self.espacios = [[0, self.tam_ram]]
 
-    def nuevo_proceso(self, tam):
-        #Mejor ajuste
-        op = []
-        for i in range(len(self.espacios)):
-            op.append(self.espacios[i][1]-tam)
-        
-        for i in range(len(op)):
-            if op[i]<0:
-                op[i]=self.tam_ram+1
-        i = op.index(min(op))
-        if op[i]>self.tam_ram:
+    def nuevo_proceso(self, tam, ajuste):
+        if ajuste == 1:
+            #Primer ajuste
+            es = False
+            for i in range(len(self.espacios)):
+                if self.espacios[i][1]>=tam:
+                    es = True
+                    break
+            if not es:
                 return False
+        
+        elif ajuste == 2:
+            #Mejor ajuste
+            op = []
+            for i in range(len(self.espacios)):
+                op.append(self.espacios[i][1]-tam)
+            
+            for i in range(len(op)):
+                if op[i]<0:
+                    op[i]=self.tam_ram+1
+            i = op.index(min(op))
+            if op[i]>self.tam_ram:
+                return False
+        
+        elif ajuste == 3:
+            #Peor ajuste
+            op = []
+            for i in range(len(self.espacios)):
+                op.append(self.espacios[i][1]-tam)
+            
+            i = op.index(max(op))
+            if op[i]<0:
+                return False
+        
         pos = self.espacios[i][0]
         self.espacios[i][0] += tam
         self.espacios[i][1] -= tam
@@ -176,6 +198,9 @@ class Dinamica(Gestor):
                 break
         if espacio[1]>0:
             self.espacios.append(espacio)
+            def k(e):
+                return e[0]
+            self.espacios.sort(key=k)
             
         proceso[1] = False
     
