@@ -11,17 +11,18 @@ class EstaticaFija(Gestor):
         self.hacer_particiones()
     
     def nuevo_proceso(self, tam):
-        if self.particiones[-1]!=0:
-            return False
-        
         if (tam>self.tam_par):
             return False
         else:
+            proceso = -1
             for i in range(len(self.particiones)):
                 if self.particiones[i] == 0:    
                     self.particiones[i] = tam
+                    proceso = i
                     break
-            proceso = i
+            if proceso == -1:
+                return False
+
             self.procesos.append([proceso, True])
             
             cl = self.RAM.colores[len(self.procesos)%len(self.RAM.colores)]
@@ -227,7 +228,7 @@ class Dinamica(Gestor):
     def compactar(self):
         espacio = self.espacios[0]
         c = 0
-        while len(self.espacios)!=1 and c<100:
+        while len(self.espacios)!=1 or self.espacios[-1][0]+self.espacios[-1][1]!=self.tam_ram:
 
             for i in range(len(self.procesos)):
                 if self.procesos[i][1] == True:

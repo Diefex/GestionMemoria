@@ -72,7 +72,11 @@ class Aplicacion:
             elif isinstance(self.gestor, Segmentacion):
                 tam = 0
             else:
-                tam = int(tam)*1024
+                try:
+                    tam = int(tam)*1024
+                except:
+                    tam=0
+                    messagebox.showinfo('Solo enteros', 'Por favor introduzca un numero entero')
         else:
             tam = 0
         if tam!=0:
@@ -101,6 +105,7 @@ class Aplicacion:
         tabla(tbl)
 
     def init_ventana_principal(self, gestor):
+        self.ven_sel_gestores.destroy()
         self.ventana=tk.Tk()
         self.RAM = canvasRAM()
 
@@ -115,8 +120,7 @@ class Aplicacion:
         elif(gestor==5):
             self.gestor = Segmentacion(self.RAM)
         else:
-            print('Seleccione un gestor')
-            print(gestor)
+            return
 
         self.panel_nproceso()
         self.panel_qproceso()
@@ -140,15 +144,15 @@ class Aplicacion:
         lf.grid(column=0, row=0, sticky="w", padx=10, pady=10)
 
         gestor = tk.IntVar()
+        gestor.set(1)
         ttk.Radiobutton(lf, text="Particiones Estáticas Fijas", variable=gestor, value=1).grid(column=0, row=0, sticky="w")
         ttk.Radiobutton(lf, text="Particiones Estáticas Variables", variable=gestor, value=2).grid(column=0, row=1, sticky="w")
         ttk.Radiobutton(lf, text="Particiones Dinámicas", variable=gestor, value=3).grid(column=0, row=2, sticky="w")
         ttk.Radiobutton(lf, text="Paginación", variable=gestor, value=4).grid(column=0, row=3, sticky="w")
         ttk.Radiobutton(lf, text="Segmentación", variable=gestor, value=5).grid(column=0, row=4, sticky="w")
-        ttk.Button(self.ven_sel_gestores, text="Seleccionar", command=self.ven_sel_gestores.destroy).grid(column=0, row=1)
+        ttk.Button(self.ven_sel_gestores, text="Seleccionar", command=lambda: self.init_ventana_principal(gestor.get())).grid(column=0, row=1)
         
         self.ven_sel_gestores.resizable(0,0)
         self.ven_sel_gestores.mainloop()
-        self.init_ventana_principal(gestor.get())
         
 ap = Aplicacion()

@@ -14,8 +14,12 @@ class Paginacion(Gestor):
     def nuevo_proceso(self, tam):
         proceso = []
         n = floor(tam/self.tam_pag)
+        m_dis = len([m for m in self.marcos if m==0])
         if(tam%self.tam_pag != 0):
             n+=1
+        if n>m_dis:
+            return False
+
         for i in range(n):
             j = 0
             m = self.marcos[j]
